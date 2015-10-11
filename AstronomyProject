@@ -1,1 +1,9 @@
+Authors: Topher Witt, Trevor Sigmund, Erica Wood
 
+Clustering problem for 3D and 4D objects (n <= 50,000)
+
+Find shapes of contiguous clusters.
+
+Members: Latitude (degrees), longitude (deg), velocity, brightness (radiotemperature)
+
+Implemented in Python.

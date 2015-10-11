@@ -7,3 +7,10 @@ Find shapes of contiguous clusters.
 Members: Latitude (degrees), longitude (deg), velocity, brightness (radiotemperature)
 
 Implemented in Python.
+
+General specifications:
+
+  1. Look into methods to group the points.  
+
+  2. Automatically define a region (2D, 3D, ND)  that encompasses the points in a reasonable way
+  (Ex: sphere, tube, sheet, hypercube, etc.)

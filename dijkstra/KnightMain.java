@@ -2,6 +2,10 @@ package dijkstra;
 
 import java.util.Scanner;
 
+// Import heap?
+// Start out making it generic
+// Then tailor it to the program
+
 /*********************************************************
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
  * Date: 10.12.2015
@@ -32,7 +36,8 @@ import java.util.Scanner;
  * 		pi[v] = predecessor of V in the shortest path from S to V
  * 
  * Relaxation operation:
- * 		relax(u,v,w){
+ * 		relax(u,v,w)
+ * 		{
  * 			if (d[v] > (d[u] + w(u,v)))
  * 			then (d[v] = d[u] + w(u,v)) // Found shorter path to vertex d
  * 			pi[v] = u					// Update d-val & predecessor rln
@@ -65,7 +70,12 @@ import java.util.Scanner;
  * 		next shortest distance node.
  *********************************************************/
 
-public class Knight
+// 1. Pull map from file
+// 2. Translate to 2D array of vertices
+// 3. Calculate adjacencies from edges of map
+// 4. Apply dijkstras
+
+public class KnightMain
 {
 	// Not using graph class
 
@@ -105,7 +115,7 @@ public class Knight
 		createBoard(fileLine);
 
 	} // End main
-	
+
 	//********************************************************
 
 	// Create (i, j) board (2D array) using (n x m) input
@@ -115,24 +125,52 @@ public class Knight
 		// knightMoves(i, j);
 		// call knightMoves()
 	} // End createBoard(file)
-	
+
 	//********************************************************
 
-	// Knight move - "Edge"
+	// Knight move to another position - "Edge"
+	// Knight position - Node/Vertex
 	// Calculate and return possible moves for Knight
-	// TODO
-	// Find gold later.
-	// Add obstacle trees later.
-	public int[][] knightMoves(int i, int j)
+	public int[][] knightMoves(int i,int j)
 	{
+		/*
+		O(1) formula?
+		Hard to find the function f( x , y ) that returns the number
+		of moves required to go from square (0,0) to square (i,j)
+		// if 0 <= j <= i
+		// int f( int i , int j )
+		{
+		    int delta = i - j;
+
+		    if( j > delta )
+		        return 2 * ( ( j - delta ) / 3 ) + delta;
+		    else
+		        return delta - 2 * ( ( delta - j ) / 4 );
+		}*/
+
 		int spaces[][] = new int[i][j];
 		// Target: Gold
 		return spaces;
 	} // End knightMoves(i,j)
-	
+
+	//********************************************************
+
+	// 2D array of vertices
+	public void computeVertexMatrix(int[][] vertices)
+	{
+		// loop through array, grab vertex
+		// calculate 8 possibilities
+		// create edge array with vertices that exist
+		// set v0.adjacencies = blabla
+	} // End computeVertexMatrix(int[][])
+
+
+	//********************************************************
+
 	public void printMoves()
 	{
+		// StringBuilder
 		// (3,3)->(1,2)->(3,1)->(4,3)->(2,2)->(3,4)
 	}
-	
+
 } // End Knight.java

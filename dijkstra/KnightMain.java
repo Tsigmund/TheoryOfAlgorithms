@@ -77,15 +77,23 @@ import java.util.Scanner;
 
 public class KnightMain
 {
-	// Not using graph class
 
 	// Accept input for (n x m) (?)
 	public static void main(String[] args)
 	{
+		String fileName = "KnightFile.txt";
+		
+		readFromFile(fileName);
+		printMoves();
+
+	} // End main
+	
+	//********************************************************
+
+	public static void readFromFile(String fileName)
+	{
 		// Default hardcode 10 file lines
 		String[] fileLine = new String[10];
-
-		String fileName = "KnightFile.txt";
 
 		// Each of the next n lines will contain m characters
 		// ., K, G, T
@@ -106,31 +114,45 @@ public class KnightMain
 
 		while (fileScan != null)
 		{
+			// BoardFormatException if file format doesn't match dimensions
 			String line = fileScan.nextLine();
 			count++;
 			fileLine[count] = line;
 		}
-
-		// Evaluate each line of file and assemble into 2D framework
-		createBoard(fileLine);
-
-	} // End main
+		
+		createBoardArray(fileLine);
+		
+		
+	} // End readFromFile(fileName)
 
 	//********************************************************
 
 	// Create (i, j) board (2D array) using (n x m) input
 	// And given obstacles from file
-	public static void createBoard(String[] lineFile)
+	// Return 2D array to be used by Adjacency Matrix
+	public static int[][] createBoardArray(String[] lineFile)
 	{
+		int[][] boardArray = null;
+		
+		// First line gives dimensions of board
+		String[] boardDimension = lineFile[0].split("");
+		String x = boardDimension[0];
+		String y = boardDimension[1];
+		
+		// Print i x j Board
+		System.out.println(x + " x " + y + " Board.");
+
 		// knightMoves(i, j);
-		// call knightMoves()
+		return boardArray;
+
 	} // End createBoard(file)
 
 	//********************************************************
 
-	// Knight move to another position - "Edge"
-	// Knight position - Node/Vertex
+	// Knight Move/Jump => Edge
+	// Knight Square/Space/Position => Node/Vertex
 	// Calculate and return possible moves for Knight
+	// TODO: This method create Adjacency Matrix
 	public int[][] knightMoves(int i,int j)
 	{
 		/*
@@ -162,12 +184,13 @@ public class KnightMain
 		// calculate 8 possibilities
 		// create edge array with vertices that exist
 		// set v0.adjacencies = blabla
+
 	} // End computeVertexMatrix(int[][])
 
 
 	//********************************************************
 
-	public void printMoves()
+	public static void printMoves()
 	{
 		// StringBuilder
 		// (3,3)->(1,2)->(3,1)->(4,3)->(2,2)->(3,4)

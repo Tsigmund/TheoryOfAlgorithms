@@ -1,5 +1,7 @@
 package dijkstra;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 // Import heap?
@@ -78,22 +80,37 @@ import java.util.Scanner;
 public class KnightMain
 {
 
+	private static int rows;
+	private static int columns;
+	private static Vertex start;
+	private static Vertex end;
+	private static Vertex[][] board;	
+	
 	// Accept input for (n x m) (?)
 	public static void main(String[] args)
 	{
 		String fileName = "KnightFile.txt";
 		
-		readFromFile(fileName);
+		String[] fileLines = readFromFile(fileName);
+		
+		createBoardArray(fileLines);
+		
+		createGraph();
+		
+		Dijkstra.computePaths(start);
+		
+		List<Vertex> path = Dijkstra.getShortestPathTo(end);
+		
 		printMoves();
 
 	} // End main
 	
 	//********************************************************
 
-	public static void readFromFile(String fileName)
+	private static String[] readFromFile(String fileName)
 	{
 		// Default hardcode 10 file lines
-		String[] fileLine = new String[10];
+		String[] fileLines = new String[10];
 
 		// Each of the next n lines will contain m characters
 		// ., K, G, T
@@ -117,11 +134,10 @@ public class KnightMain
 			// BoardFormatException if file format doesn't match dimensions
 			String line = fileScan.nextLine();
 			count++;
-			fileLine[count] = line;
+			fileLines[count] = line;
 		}
 		
-		createBoardArray(fileLine);
-		
+		return fileLines;		
 		
 	} // End readFromFile(fileName)
 
@@ -130,25 +146,140 @@ public class KnightMain
 	// Create (i, j) board (2D array) using (n x m) input
 	// And given obstacles from file
 	// Return 2D array to be used by Adjacency Matrix
-	public static int[][] createBoardArray(String[] lineFile)
+	private static void createBoardArray(String[] lineFile)
 	{
-		int[][] boardArray = null;
-		
 		// First line gives dimensions of board
 		String[] boardDimension = lineFile[0].split("");
 		String x = boardDimension[0];
 		String y = boardDimension[1];
 		
+		// TODO IS THIS CORRECT OR SHOULD IT BE FLIPED?
+		rows = Integer.getInteger(x);
+		columns = Integer.getInteger(y);
+		
+		board = new Vertex[rows][columns];
+		
+		for(int r = 0; r < rows; r++){
+			// TODO ARE THE VALUES DELIMINATED BY ""?
+			String[] rVal = lineFile[r].split("");
+			for(int c = 0; c < columns; c++){
+				String val = rVal[c];
+				Vertex v  = new Vertex(createVertexName(r, c, val));
+				board[r][c] = v;
+				if(val.contentEquals("K")){
+					start = v;
+				} else if(val.contentEquals("G")){
+					end = v;
+				}
+			}
+		}
+		
 		// Print i x j Board
-		System.out.println(x + " x " + y + " Board.");
+//		System.out.println(x + " x " + y + " Board.");
 
 		// knightMoves(i, j);
-		return boardArray;
 
 	} // End createBoard(file)
+	
+	private static String createVertexName(int row, int col, String value){
+		if(value.contentEquals(".")){
+			value = "";
+		}
+		return row+" "+col+value;
+	}
 
 	//********************************************************
 
+	
+	private static void createGraph(){
+		for(int r = 0; r < rows; r++){
+			for(int c = 0; c < columns; c++){
+				Vertex v = board[r][c];
+				
+				if(!isTree(v)){
+					giveVertexEdges(r, c, v);
+				}
+			}
+		}
+	}
+	
+	private static void giveVertexEdges(int row, int col, Vertex v){
+		List<Edge> adjacencies = new ArrayList<Edge>();
+		
+		// checking positions starting clockwise from 1:00 position
+		int moveTooRow = row + 1;
+		int moveTooCol = col + 2;
+		if(moveTooRow < rows && moveTooCol > -1 && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+
+		// 2:00
+		moveTooRow = row + 2;
+		moveTooCol = col + 1;
+		if(moveTooRow < rows && moveTooCol > -1 && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		
+		// 4:00
+		moveTooRow = row + 2;
+		moveTooCol = col - 1;
+		if(moveTooRow < rows && moveTooCol < columns && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		// 5:00
+		moveTooRow = row + 1;
+		moveTooCol = col - 2;
+		if(moveTooRow < rows && moveTooCol < columns && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		// 7:00
+		moveTooRow = row - 1;
+		moveTooCol = col - 2;
+		if(moveTooRow > -1 && moveTooCol < columns && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		// 8:00
+		moveTooRow = row - 2;
+		moveTooCol = col - 1;
+		if(moveTooRow > -1 && moveTooCol > columns && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		// 10:00
+		moveTooRow = row - 2;
+		moveTooCol = col + 1;
+		if(moveTooRow > -1 && moveTooCol > -1 && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		// 11:00
+		moveTooRow = row - 1;
+		moveTooCol = col + 2;
+		if(moveTooRow > -1 && moveTooCol > -1 && !isTree(v)){
+			Vertex vert = board[moveTooRow][moveTooCol];
+			adjacencies.add(new Edge(vert, 0));
+		}
+		
+		if(!adjacencies.isEmpty())
+			v.adjacencies = (Edge[]) adjacencies.toArray();
+		
+	}
+	
+	private static boolean isTree(Vertex v){
+		return v.name.contains("T");
+	}
+	
 	// Knight Move/Jump => Edge
 	// Knight Square/Space/Position => Node/Vertex
 	// Calculate and return possible moves for Knight

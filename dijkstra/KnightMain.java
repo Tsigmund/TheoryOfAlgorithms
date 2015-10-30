@@ -85,15 +85,13 @@ import java.util.Scanner;
 
 public class KnightMain
 {
-
 	private static int rows;
 	private static int columns;
 	private static Vertex start;
 	private static Vertex end;
 	private static Vertex[][] board;	
 
-	// Accept input for (n x m) (?)
-	public static void main(String[] args)
+	public static void main(String[] args) throws BoardFormatException
 	{
 		String fileName = "KnightFile.txt";
 
@@ -115,23 +113,18 @@ public class KnightMain
 	//********************************************************
 
 	@SuppressWarnings("resource")
-	private static String[] readFromFile(String fileName)
+	private static String[] readFromFile(String fileName) throws BoardFormatException
 	{
 		// Default hardcode 10 file lines
 		String[] fileLines = new String[10];
-
-		// Each of the next n lines will contain m characters
-		// ., K, G, T
-
-		// The board will be given in an input file.
-		// * First line of the file will contain 2 integers: n and m.
-		// * Each of the next n lines will contain m characters.
-		// * jth character of ith line will contain info about c_i,j.
-		// * If jth character of ith line is '.', c_i,j is an empty cell.
-		// * If j th character of ith line is K, c_i,j contains the knight.
-		// * If jth character of ith line is G, c_i,j contains the gold.
-		// * If jth character of ith line is T, c_i,j contains a tree.
-		// * Input file contains exactly one K and exactly one G characters
+		
+		// Each of the next n lines will contain m characters.
+		// jth character of ith line will contain info about c_i,j.
+		// If jth character of ith line is '.', [i][j] is an empty cell.
+		// If jth character of ith line is K, [i][j] contains the knight.
+		// If jth character of ith line is G, [i][j] contains the gold.
+		// If jth character of ith line is T, [i][j] contains a tree.
+		// Input file contains exactly one K and exactly one G characters
 
 		Scanner fileScan;
 		try
@@ -149,10 +142,13 @@ public class KnightMain
 		}
 		catch (FileNotFoundException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("File does not exist.");
 		}
-
+		catch (Exception e)
+		{
+			// File does not follow specific rules for Knight Board
+			throw new BoardFormatException();
+		}
 
 		return fileLines;		
 
@@ -165,58 +161,60 @@ public class KnightMain
 	// Return 2D array to be used by Adjacency Matrix
 	private static void createBoardArray(String[] lineFile)
 	{
+		// FIXME Second line actually gives dimensions of board for some reason
+		// 		First line is read as null.
+		// 		Topher, did you test this with your own file yet?
+		// 		I'll change text editors and see what happens.
+		
 		// First line gives dimensions of board
 		String[] boardDimension = lineFile[1].split(" ");
 		String x = boardDimension[0];
 		String y = boardDimension[1];
 
-		// TODO IS THIS CORRECT OR SHOULD IT BE FLIPED?
-		// CORRECT
 		rows = Integer.parseInt(x);
 		columns = Integer.parseInt(y);
 
 		// Creates uninitialized vertex board of certain size
 		board = new Vertex[rows][columns];
 
-		// TODO : Possibly need to add 2-squares-thick null border
+		// TODO: Possibly need to add 2-squares-thick null border
 
 		for(int r = 0; r < rows; r++)
 		{
-			// TODO ARE THE VALUES DELIMINATED BY ""?
-			// YES
-			if (r < rows-1)
-			{
-				// Fill each board row with values given from file
-				String[] rowVal = lineFile[r+1].split("");
-				
-				// TODO why do we need to initialize the columns?
-				// We are not searching for anything . . .
-				// Just need columns for jumps don't we?
-				for(int c = 0; c < columns; c++)
-				{
-					// colVal changes with each iteration
-					// colVal is temp
-					String colVal = rowVal[c];
-					Vertex v  = new Vertex(createVertexName(r, c, colVal));
-					board[r][c] = v;
+			// Fill each board row with values given from file
+			String[] rowVal = lineFile[r+1].split("");
 
-					if(isKnight(v))
-					{
-						start = v;
-					}
-					else if (isGold(v))
-					{
-						end = v;
-					}
+			// TODO why do we need to initialize the columns?
+			// 		We are not sorting anything . . .
+			// 		Just need columns for jumps don't we? Hm.
+			for(int c = 0; c < columns; c++)
+			{
+				// colVal changes with each iteration
+				// colVal is temp
+				String colVal = rowVal[c];
+				Vertex v  = new Vertex(createVertexName(r, c, colVal));
+				board[r][c] = v;
+
+				if(isKnight(v))
+				{
+					start = v;
 				}
-			}
-			else break;
-		}
+				else if (isGold(v))
+				{
+					end = v;
+				}
+				
+			} // End for c
+			
+		} // End for r
 
 	} // End createBoard(file)
 
 	//********************************************************
 
+	// TODO Topher what is this method for?
+	// 		Only time it is used is in createBoardArray
+	
 	private static String createVertexName(int row, int col, String value)
 	{
 		// If square
@@ -224,7 +222,8 @@ public class KnightMain
 		{
 			value = "";
 		}
-		return (row + " " + col + value);
+		
+		return (row + " " + col + " " + value);
 
 	} // End createVertexName(row, col, val)
 
@@ -359,13 +358,14 @@ public class KnightMain
 	public static void printPath(List<Vertex> moves)
 	{
 		// Each list element is a vertex
-		
+
 		// StringBuilder
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i < moves.size(); i++)
 		{
 			// TODO print list vertices
-			//System.out.println(moves[i]);
+			moves.toArray();
+			System.out.println(moves);
 			// if (i != moves.size()-1) {
 			sb.append("->");
 		}

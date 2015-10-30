@@ -31,19 +31,18 @@ import java.util.Collections;
 
 class Vertex implements Comparable<Vertex>
 {
-	public final String name;
+	public final String value;
 	public Edge[] adjacencies;
 	public double minDistance = Double.POSITIVE_INFINITY;
 	public Vertex previous;
-	private int[][] vertices;
-	public Vertex(String argName) { name = argName; }
-	public String toString() { return name; }
+	public Vertex(String val) { value = val; }
+	public String toString() { return value; }
 	public int compareTo(Vertex other)
 	{
 		return Double.compare(minDistance, other.minDistance);
 	}
 	
-}
+} // End Vertex subclass
 
 //********************************************************
 
@@ -53,7 +52,8 @@ class Edge
 	public final double weight;
 	public Edge(Vertex argTarget, double argWeight)
 	{ target = argTarget; weight = argWeight; }
-}
+	
+} // End Edge subclass
 
 //********************************************************
 

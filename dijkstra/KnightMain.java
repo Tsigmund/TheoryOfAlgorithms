@@ -181,7 +181,7 @@ public class KnightMain
 		for (int r = 1; r < rows; r++)
 		{
 			// Fill each board row with values given from file
-			String[] rowVal = lineFile[r].split("^.");
+			String[] rowVal = lineFile[r].split("");
 			//System.out.println("Original: " + lineFile[r]);
 			//System.out.println("Delimited: " + rowVal[1]);
 

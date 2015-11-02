@@ -132,12 +132,11 @@ public class KnightMain
 			fileScan = new Scanner(new FileReader(fileName));
 			int count = 0;
 
-			while (fileScan!= null && fileScan.hasNextLine())
+			while (fileScan.hasNextLine())
 			{
 				// BoardFormatException if file format doesn't match dimensions
-				String line = fileScan.nextLine();
-				count++;
-				fileLines[count] = line;
+				String line = fileScan.nextLine()/*.trim()*/;
+				fileLines[count++] = line;
 			}
 		}
 		catch (FileNotFoundException e)
@@ -167,7 +166,7 @@ public class KnightMain
 		// 		I'll change text editors and see what happens.
 		
 		// First line gives dimensions of board
-		String[] boardDimension = lineFile[1].split(" ");
+		String[] boardDimension = lineFile[0].split(" ");
 		String x = boardDimension[0];
 		String y = boardDimension[1];
 
@@ -179,20 +178,20 @@ public class KnightMain
 
 		// TODO: Possibly need to add 2-squares-thick null border
 
-		for(int r = 0; r < rows; r++)
+		for (int r = 1; r < rows; r++)
 		{
 			// Fill each board row with values given from file
-			String[] rowVal = lineFile[r+1].split("");
+			String[] rowVal = lineFile[r].split("^.");
+			//System.out.println("Original: " + lineFile[r]);
+			//System.out.println("Delimited: " + rowVal[1]);
 
-			// TODO why do we need to initialize the columns?
-			// 		We are not sorting anything . . .
-			// 		Just need columns for jumps don't we? Hm.
-			for(int c = 0; c < columns; c++)
+			for (int c = 0; c < columns; c++)
 			{
-				// colVal changes with each iteration
-				// colVal is temp
 				String colVal = rowVal[c];
+				
+				// Why doesn't this want rowVal?
 				Vertex v  = new Vertex(createVertexName(r, c, colVal));
+				
 				board[r][c] = v;
 
 				if(isKnight(v))
@@ -217,8 +216,8 @@ public class KnightMain
 	
 	private static String createVertexName(int row, int col, String value)
 	{
-		// If square
-		if(value.contentEquals("."))
+		// If blank square
+		if (value.contentEquals("."))
 		{
 			value = "";
 		}
@@ -363,9 +362,13 @@ public class KnightMain
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i < moves.size(); i++)
 		{
-			// TODO print list vertices
 			moves.toArray();
-			System.out.println(moves);
+			
+			System.out.println(moves.get(i));
+			
+			// TODO Split index and delimit by ","
+			// TOPHER what is moves returning?
+			System.out.println("(" + moves + ")");
 			// if (i != moves.size()-1) {
 			sb.append("->");
 		}

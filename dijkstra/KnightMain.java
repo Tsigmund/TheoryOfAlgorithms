@@ -14,64 +14,6 @@ import java.util.Scanner;
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
  * Date: 10.12.2015
  * Course: CS433 - Theory of Algorithms
- *********************************************************
- *
- * Given two inputs: startLoc and endLoc.
- * The goal is to then calculate and print the shortest path
- * that the knight can take to get to the target location.
- * 
- * Given n x m (2D) board (2 <= n <= 500, 2 <= m <= 500)
- * Each cell of the board will be identified by (i,j)
- * 
- * ith row, jth column: c_i,j.
- * Top leftmost cell: c_1,1
- * Bottom rightmost cell: c_n,m
- * 
- * Graph: available moves are connected (value=1), and 
- * unavailable moves are disconnected (value=0).
- * 
- * Sparse matrix:
- * (i,j)=1, (i+1,j+2)=1, etc.
- * 
- * Relaxation: Continually reduce d-values (lengths of current
- * shortest paths) down to delta values (length of shortest path)
- * 		d[v] = length of current shortest path from source S to V
- * 		delta(S,V) = length of a shortest path
- * 		pi[v] = predecessor of V in the shortest path from S to V
- * 
- * Relaxation operation:
- * 		relax(u,v,w)
- * 		{
- * 			if (d[v] > (d[u] + w(u,v)))
- * 			then (d[v] = d[u] + w(u,v)) // Found shorter path to vertex d
- * 			pi[v] = u					// Update d-val & predecessor rln
- * 		}
- * 
- * Lemma: The relaxation operation maintains the invariant that
- * 		d[v] >= delta(S,V) for all V in V
- * 
- * Think of distances as shortest path method instead of edge
- * 
- * Greedy Algorithm: (Ball example: Gravity)
- * 
- *********************************************************
- *
- * Dijkstra Pseudocode:
- * 
- * Dijkstra(G, W, s) (Graph, Weights, startingVertex)
- * Initialize (G,s) // Mark s as starting vertex; Set D[s] = 0
- * S (set S) = null
- * Q = V[a] 		// Entire set of vertices
- * 
- * while (Q != null) {		// While set of vertices isn't empty
- * 		u <- EXTRACT_MIN(Q) // Delete u from Q
- * 		S <- S UNION {u}
- * 		for each vertex v in Adj[u]{
- * 			relax(u,v,w)	// Relax
- * 		}
- * 
- * To be more efficient, use min heap when searching for the 
- * 		next shortest distance node.
  *********************************************************/
 
 // Knight Move/Jump => Edge
@@ -116,8 +58,8 @@ public class KnightMain
 	private static String[] readFromFile(String fileName) throws BoardFormatException
 	{
 		// Default hardcode 10 file lines
-		String[] fileLines = new String[10];
-		
+		String[] fileLine = new String[10];
+
 		// Each of the next n lines will contain m characters.
 		// jth character of ith line will contain info about c_i,j.
 		// If jth character of ith line is '.', [i][j] is an empty cell.
@@ -136,7 +78,7 @@ public class KnightMain
 			{
 				// BoardFormatException if file format doesn't match dimensions
 				String line = fileScan.nextLine()/*.trim()*/;
-				fileLines[count++] = line;
+				fileLine[count++] = line;
 			}
 		}
 		catch (FileNotFoundException e)
@@ -149,7 +91,7 @@ public class KnightMain
 			throw new BoardFormatException();
 		}
 
-		return fileLines;		
+		return fileLine;		
 
 	} // End readFromFile(fileName)
 
@@ -158,15 +100,11 @@ public class KnightMain
 	// Create (i, j) board (2D array) using (n x m) input
 	// And given obstacles from file
 	// Return 2D array to be used by Adjacency Matrix
-	private static void createBoardArray(String[] lineFile)
+	private static void createBoardArray(String[] fileLine)
 	{
-		// FIXME Second line actually gives dimensions of board for some reason
-		// 		First line is read as null.
-		// 		Topher, did you test this with your own file yet?
-		// 		I'll change text editors and see what happens.
-		
+
 		// First line gives dimensions of board
-		String[] boardDimension = lineFile[0].split(" ");
+		String[] boardDimension = fileLine[0].split(" ");
 		String x = boardDimension[0];
 		String y = boardDimension[1];
 
@@ -176,22 +114,46 @@ public class KnightMain
 		// Creates uninitialized vertex board of certain size
 		board = new Vertex[rows][columns];
 
-		// TODO: Possibly need to add 2-squares-thick null border
+		// TODO: Possibly need to add 2-squares-thick null/tree border
+		// in order to avoid erroneous edges.
+		// 		[1] Increase 2D array to 9x9
+		// 		[2a] Row 0,1,8,9 completely null / "T"
+		// 		[2b] Col 0,1,8,9 completely null / "T"
 
 		for (int r = 1; r < rows; r++)
 		{
-			// Fill each board row with values given from file
-			String[] rowVal = lineFile[r].split("");
-			//System.out.println("Original: " + lineFile[r]);
-			//System.out.println("Delimited: " + rowVal[1]);
+			// A 2D array is required to pull out characters individually
+			// 		Because Scanner does not have a nextChar() method.
+			// 		InputStreamReader would allow that, however.
+			String[][] rowVal = new String[5][5];
+			
+			// Fill each board row with char values given from file
+			for (int i=0; i < fileLine[r].length(); i++)
+			{
+				// Each row element is a textfile character, including "."
+				rowVal[r][i] = String.valueOf(fileLine[r].charAt(i));
+				// Test
+				//System.out.print(rowVal[r][i]);
+			}
+			
+			// Used in conjunction with Test print above
+			// Newline for rowVal test print
+			//System.out.println();
 
 			for (int c = 0; c < columns; c++)
 			{
-				String colVal = rowVal[c];
+				String colVal = rowVal[r][c];
 				
-				// Why doesn't this want rowVal?
+				// Test that column values are filled properly
+				//System.out.print(colVal);
+
+				// Creates a "special" vertex value for non-period characters
+				//		AKA Specifies K, T, G vertex values
 				Vertex v  = new Vertex(createVertexName(r, c, colVal));
 				
+				// Test vertex values
+				//System.out.println(v);
+
 				board[r][c] = v;
 
 				if(isKnight(v))
@@ -202,27 +164,28 @@ public class KnightMain
 				{
 					end = v;
 				}
-				
+
 			} // End for c
-			
+
+			// Newline for colVal test print
+			System.out.println();
+
+
 		} // End for r
 
 	} // End createBoard(file)
 
 	//********************************************************
 
-	// TODO Topher what is this method for?
-	// 		Only time it is used is in createBoardArray
-	
 	private static String createVertexName(int row, int col, String value)
 	{
 		// If blank square
-		if (value.contentEquals("."))
+		if (value.equals("."))
 		{
 			value = "";
 		}
-		
-		return (row + " " + col + " " + value);
+
+		return ("(" + row + ", " + col + "): " + value);
 
 	} // End createVertexName(row, col, val)
 
@@ -235,6 +198,9 @@ public class KnightMain
 			for(int c = 0; c < columns; c++)
 			{
 				Vertex v = board[r][c];
+				
+				// Test
+				//System.out.println(v);
 
 				if(!isTree(v))
 				{
@@ -335,21 +301,22 @@ public class KnightMain
 
 	private static boolean isKnight(Vertex v)
 	{
-		return v.value.contains("K");
+		return v.value.equals("K");
 	}
 
 	//********************************************************
 
 	private static boolean isTree(Vertex v)
 	{
-		return v.value.contains("T");
+		// FIXME tried contains(), contentEquals(), v.value.trim(), etc.
+		return v.value.contentEquals("T");
 	}
 
 	//********************************************************
 
 	private static boolean isGold(Vertex v)
 	{
-		return v.value.contains("G");
+		return v.value.equals("G");
 	}
 
 	//********************************************************
@@ -363,14 +330,15 @@ public class KnightMain
 		for (int i=0; i < moves.size(); i++)
 		{
 			moves.toArray();
-			
+
 			System.out.println(moves.get(i));
-			
-			// TODO Split index and delimit by ","
-			// TOPHER what is moves returning?
+
 			System.out.println("(" + moves + ")");
-			// if (i != moves.size()-1) {
-			sb.append("->");
+			
+			if (i < moves.size())
+			{
+				sb.append("->");
+			}
 		}
 
 		// (3,3)->(1,2)->(3,1)->(4,3)->(2,2)->(3,4)

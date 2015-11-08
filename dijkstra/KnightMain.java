@@ -58,7 +58,7 @@ public class KnightMain
 	private static String[] readFromFile(String fileName) throws BoardFormatException
 	{
 		// Default hardcode 10 file lines
-		String[] fileLine = new String[10];
+		String[] fileLine = null;
 
 		// Each of the next n lines will contain m characters.
 		// jth character of ith line will contain info about c_i,j.
@@ -73,6 +73,16 @@ public class KnightMain
 		{
 			fileScan = new Scanner(new FileReader(fileName));
 			int count = 0;
+			
+			// First line gives dimensions of board
+			String[] boardDimension = fileScan.nextLine().split(" ");
+			String x = boardDimension[0];
+			String y = boardDimension[1];
+
+			rows = Integer.parseInt(x);
+			columns = Integer.parseInt(y);
+			
+			fileLine = new String[rows];
 
 			while (fileScan.hasNextLine())
 			{
@@ -103,16 +113,11 @@ public class KnightMain
 	private static void createBoardArray(String[] fileLine)
 	{
 
-		// First line gives dimensions of board
-		String[] boardDimension = fileLine[0].split(" ");
-		String x = boardDimension[0];
-		String y = boardDimension[1];
 
-		rows = Integer.parseInt(x);
-		columns = Integer.parseInt(y);
 
 		// Creates uninitialized vertex board of certain size
 		board = new Vertex[rows][columns];
+		String[][] rowVal = new String[rows][columns];
 
 		// TODO: Possibly need to add 2-squares-thick null/tree border
 		// in order to avoid erroneous edges.
@@ -120,18 +125,18 @@ public class KnightMain
 		// 		[2a] Row 0,1,8,9 completely null / "T"
 		// 		[2b] Col 0,1,8,9 completely null / "T"
 
-		for (int r = 1; r < rows; r++)
+		int row = 0;
+		for(String line: fileLine)
 		{
 			// A 2D array is required to pull out characters individually
 			// 		Because Scanner does not have a nextChar() method.
 			// 		InputStreamReader would allow that, however.
-			String[][] rowVal = new String[5][5];
 			
 			// Fill each board row with char values given from file
-			for (int i=0; i < fileLine[r].length(); i++)
+			for (int i=0; i < fileLine[row].length(); i++)
 			{
 				// Each row element is a textfile character, including "."
-				rowVal[r][i] = String.valueOf(fileLine[r].charAt(i));
+				rowVal[row][i] = String.valueOf(line.charAt(i));
 				// Test
 				//System.out.print(rowVal[r][i]);
 			}
@@ -140,17 +145,52 @@ public class KnightMain
 			// Newline for rowVal test print
 			//System.out.println();
 
+//			for (int c = 0; c < columns; c++)
+//			{
+//				String colVal = rowVal[boardRow][c];
+//				
+//				// Test that column values are filled properly
+//				//System.out.print(colVal);
+//
+//				// Creates a "special" vertex value for non-period characters
+//				//		AKA Specifies K, T, G vertex values
+//				Vertex v  = new Vertex(createVertexName(boardRow, c, colVal));
+//				
+//				// Test vertex values
+//				//System.out.println(v);
+//
+//				board[boardRow][c] = v;
+//
+//				if(isKnight(v))
+//				{
+//					start = v;
+//				}
+//				else if (isGold(v))
+//				{
+//					end = v;
+//				}
+//
+//			} // End for c
+
+			// Newline for colVal test print
+			System.out.println();
+			row++;
+
+		} // End for r
+		
+		for (int r = 0; r < rows; r++)
+		{
 			for (int c = 0; c < columns; c++)
 			{
 				String colVal = rowVal[r][c];
-				
+
 				// Test that column values are filled properly
 				//System.out.print(colVal);
 
 				// Creates a "special" vertex value for non-period characters
 				//		AKA Specifies K, T, G vertex values
 				Vertex v  = new Vertex(createVertexName(r, c, colVal));
-				
+
 				// Test vertex values
 				//System.out.println(v);
 
@@ -166,12 +206,7 @@ public class KnightMain
 				}
 
 			} // End for c
-
-			// Newline for colVal test print
-			System.out.println();
-
-
-		} // End for r
+		}
 
 	} // End createBoard(file)
 
@@ -220,80 +255,93 @@ public class KnightMain
 		// Check positions starting clockwise @ 1:00
 
 		// 1:00 position
-		int rowDest = row + 1;
-		int colDest = col + 2;
-		if((rowDest < rows) && (colDest > -1) && !isTree(v))
+		int rowDest = row - 2;
+		int colDest = col + 1;
+		if((rowDest > -1) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 2:00
-		rowDest = row + 2;
-		colDest = col + 1;
-		if((rowDest < rows) && (colDest > -1) && !isTree(v))
+		rowDest = row - 1;
+		colDest = col + 2;
+		if((rowDest > -1) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 
 		// 4:00
-		rowDest = row + 2;
-		colDest = col - 1;
+		rowDest = row + 1;
+		colDest = col + 2;
 		if((rowDest < rows) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 5:00
-		rowDest = row + 1;
-		colDest = col - 2;
+		rowDest = row + 2;
+		colDest = col + 1;
 		if((rowDest < rows) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 7:00
-		rowDest = row - 1;
-		colDest = col - 2;
-		if((rowDest > -1) && (colDest < columns) && !isTree(v))
+		rowDest = row + 2;
+		colDest = col - 1;
+		if((rowDest < rows) && (colDest > -1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 8:00
-		rowDest = row - 2;
-		colDest = col - 1;
-		if((rowDest > -1) && (colDest > columns) && !isTree(v))
+		rowDest = row + 1;
+		colDest = col - 2;
+		if((rowDest < rows) && (colDest > -1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 10:00
-		rowDest = row - 2;
-		colDest = col + 1;
+		rowDest = row - 1;
+		colDest = col - 2;
 		if((rowDest > -1) && (colDest > -1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
 		}
 
 		// 11:00
-		rowDest = row - 1;
-		colDest = col + 2;
+		rowDest = row - 2;
+		colDest = col - 1;
 		if((rowDest > -1) && (colDest > -1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			adjacencies.add(new Edge(vert, 0));
+			if(!isTree(vert))
+				adjacencies.add(new Edge(vert, 0));
+		}
+		
+		Edge[] adjacenciesArray = new Edge[adjacencies.size()];
+		for(int index = 0; index < adjacencies.size(); index++){
+			adjacenciesArray[index] = adjacencies.get(index);
 		}
 
-		if(!adjacencies.isEmpty())
-			v.adjacencies = (Edge[]) adjacencies.toArray();
+//		if(adjacenciesArray.length != 0)
+			v.adjacencies = adjacenciesArray;
 
 	} // End giveVertexEdges
 
@@ -301,22 +349,24 @@ public class KnightMain
 
 	private static boolean isKnight(Vertex v)
 	{
-		return v.value.equals("K");
+		return v.value.contains("K");
 	}
 
 	//********************************************************
 
 	private static boolean isTree(Vertex v)
 	{
+
 		// FIXME tried contains(), contentEquals(), v.value.trim(), etc.
-		return v.value.contentEquals("T");
+		return v.value.contains("T");
+	
 	}
 
 	//********************************************************
 
 	private static boolean isGold(Vertex v)
 	{
-		return v.value.equals("G");
+		return v.value.contains("G");
 	}
 
 	//********************************************************

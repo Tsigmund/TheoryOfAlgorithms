@@ -48,6 +48,8 @@ public class KnightMain
 		// List of vertices
 		List<Vertex> path = Dijkstra.getShortestPathTo(end);
 
+		//System.out.println(path.toString());
+
 		printPath(path);
 
 	} // End main
@@ -57,7 +59,6 @@ public class KnightMain
 	@SuppressWarnings("resource")
 	private static String[] readFromFile(String fileName) throws BoardFormatException
 	{
-		// Default hardcode 10 file lines
 		String[] fileLine = null;
 
 		// Each of the next n lines will contain m characters.
@@ -73,7 +74,7 @@ public class KnightMain
 		{
 			fileScan = new Scanner(new FileReader(fileName));
 			int count = 0;
-			
+
 			// First line gives dimensions of board
 			String[] boardDimension = fileScan.nextLine().split(" ");
 			String x = boardDimension[0];
@@ -81,24 +82,25 @@ public class KnightMain
 
 			rows = Integer.parseInt(x);
 			columns = Integer.parseInt(y);
-			
+
 			fileLine = new String[rows];
 
 			while (fileScan.hasNextLine())
 			{
 				// BoardFormatException if file format doesn't match dimensions
-				String line = fileScan.nextLine()/*.trim()*/;
+				String line = fileScan.nextLine();
 				fileLine[count++] = line;
 			}
+			
+			if (count != rows) { throw new BoardFormatException(); }
 		}
 		catch (FileNotFoundException e)
 		{
 			System.out.println("File does not exist.");
 		}
-		catch (Exception e)
+		catch (BoardFormatException e)
 		{
-			// File does not follow specific rules for Knight Board
-			throw new BoardFormatException();
+			System.out.println("Given board dimensions do not match file format.");
 		}
 
 		return fileLine;		
@@ -112,91 +114,37 @@ public class KnightMain
 	// Return 2D array to be used by Adjacency Matrix
 	private static void createBoardArray(String[] fileLine)
 	{
-
-
-
 		// Creates uninitialized vertex board of certain size
 		board = new Vertex[rows][columns];
 		String[][] rowVal = new String[rows][columns];
 
-		// TODO: Possibly need to add 2-squares-thick null/tree border
-		// in order to avoid erroneous edges.
-		// 		[1] Increase 2D array to 9x9
-		// 		[2a] Row 0,1,8,9 completely null / "T"
-		// 		[2b] Col 0,1,8,9 completely null / "T"
-
 		int row = 0;
-		for(String line: fileLine)
+		for (String line : fileLine)
 		{
-			// A 2D array is required to pull out characters individually
-			// 		Because Scanner does not have a nextChar() method.
-			// 		InputStreamReader would allow that, however.
-			
 			// Fill each board row with char values given from file
 			for (int i=0; i < fileLine[row].length(); i++)
 			{
 				// Each row element is a textfile character, including "."
 				rowVal[row][i] = String.valueOf(line.charAt(i));
-				// Test
-				//System.out.print(rowVal[r][i]);
 			}
-			
-			// Used in conjunction with Test print above
-			// Newline for rowVal test print
-			//System.out.println();
 
-//			for (int c = 0; c < columns; c++)
-//			{
-//				String colVal = rowVal[boardRow][c];
-//				
-//				// Test that column values are filled properly
-//				//System.out.print(colVal);
-//
-//				// Creates a "special" vertex value for non-period characters
-//				//		AKA Specifies K, T, G vertex values
-//				Vertex v  = new Vertex(createVertexName(boardRow, c, colVal));
-//				
-//				// Test vertex values
-//				//System.out.println(v);
-//
-//				board[boardRow][c] = v;
-//
-//				if(isKnight(v))
-//				{
-//					start = v;
-//				}
-//				else if (isGold(v))
-//				{
-//					end = v;
-//				}
-//
-//			} // End for c
-
-			// Newline for colVal test print
-			System.out.println();
 			row++;
 
 		} // End for r
-		
+
 		for (int r = 0; r < rows; r++)
 		{
 			for (int c = 0; c < columns; c++)
 			{
 				String colVal = rowVal[r][c];
 
-				// Test that column values are filled properly
-				//System.out.print(colVal);
-
 				// Creates a "special" vertex value for non-period characters
 				//		AKA Specifies K, T, G vertex values
 				Vertex v  = new Vertex(createVertexName(r, c, colVal));
 
-				// Test vertex values
-				//System.out.println(v);
-
 				board[r][c] = v;
 
-				if(isKnight(v))
+				if (isKnight(v))
 				{
 					start = v;
 				}
@@ -220,7 +168,10 @@ public class KnightMain
 			value = "";
 		}
 
-		return ("(" + row + ", " + col + "): " + value);
+		// Test
+		//System.out.println("(" + row + "," + col + ") = " + value);
+
+		return (row + "" + col + "" + value);
 
 	} // End createVertexName(row, col, val)
 
@@ -228,21 +179,23 @@ public class KnightMain
 
 	private static void createGraph()
 	{
-		for(int r = 0; r < rows; r++)
+		for (int r = 0; r < rows; r++)
 		{
-			for(int c = 0; c < columns; c++)
+			for (int c = 0; c < columns; c++)
 			{
 				Vertex v = board[r][c];
-				
+
 				// Test
 				//System.out.println(v);
 
-				if(!isTree(v))
+				if (!isTree(v))
 				{
 					createVertexEdge(r, c, v);
 				}
-			}
-		}
+
+			} // End for c
+
+		} // End for r
 
 	} // End createGraph()
 
@@ -257,91 +210,109 @@ public class KnightMain
 		// 1:00 position
 		int rowDest = row - 2;
 		int colDest = col + 1;
-		if((rowDest > -1) && (colDest < columns) && !isTree(v))
+		if ((rowDest > -1) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 2:00
 		rowDest = row - 1;
 		colDest = col + 2;
-		if((rowDest > -1) && (colDest < columns) && !isTree(v))
+		if ((rowDest > - 1) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 
 		// 4:00
 		rowDest = row + 1;
 		colDest = col + 2;
-		if((rowDest < rows) && (colDest < columns) && !isTree(v))
+		if ((rowDest < rows) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 5:00
 		rowDest = row + 2;
 		colDest = col + 1;
-		if((rowDest < rows) && (colDest < columns) && !isTree(v))
+		if ((rowDest < rows) && (colDest < columns) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 7:00
 		rowDest = row + 2;
 		colDest = col - 1;
-		if((rowDest < rows) && (colDest > -1) && !isTree(v))
+		if ((rowDest < rows) && (colDest > - 1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 8:00
 		rowDest = row + 1;
 		colDest = col - 2;
-		if((rowDest < rows) && (colDest > -1) && !isTree(v))
+		if ((rowDest < rows) && (colDest > - 1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 10:00
 		rowDest = row - 1;
 		colDest = col - 2;
-		if((rowDest > -1) && (colDest > -1) && !isTree(v))
+		if ((rowDest > -1) && (colDest > - 1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
 
 		// 11:00
 		rowDest = row - 2;
 		colDest = col - 1;
-		if((rowDest > -1) && (colDest > -1) && !isTree(v))
+		if ((rowDest > -1) && (colDest > - 1) && !isTree(v))
 		{
 			Vertex vert = board[rowDest][colDest];
-			if(!isTree(vert))
+			if (!isTree(vert))
+			{
 				adjacencies.add(new Edge(vert, 0));
+			}
 		}
-		
+
 		Edge[] adjacenciesArray = new Edge[adjacencies.size()];
-		for(int index = 0; index < adjacencies.size(); index++){
+
+		for (int index = 0; index < adjacencies.size(); index++)
+		{
 			adjacenciesArray[index] = adjacencies.get(index);
 		}
 
-//		if(adjacenciesArray.length != 0)
-			v.adjacencies = adjacenciesArray;
+		//		if (adjacenciesArray.length != 0)
+		v.adjacencies = adjacenciesArray;
 
 	} // End giveVertexEdges
 
@@ -356,10 +327,7 @@ public class KnightMain
 
 	private static boolean isTree(Vertex v)
 	{
-
-		// FIXME tried contains(), contentEquals(), v.value.trim(), etc.
 		return v.value.contains("T");
-	
 	}
 
 	//********************************************************
@@ -375,23 +343,37 @@ public class KnightMain
 	{
 		// Each list element is a vertex
 
-		// StringBuilder
 		StringBuilder sb = new StringBuilder();
+
+		moves.toArray();
+
 		for (int i=0; i < moves.size(); i++)
 		{
-			moves.toArray();
+			//System.out.println(moves.get(i));
 
-			System.out.println(moves.get(i));
+			sb.append("(");
 
-			System.out.println("(" + moves + ")");
-			
-			if (i < moves.size())
+			sb.append(moves.get(i).toString().charAt(0));
+			sb.append(",");
+			sb.append(moves.get(i).toString().charAt(1));
+			sb.append(")");
+
+			if (i < moves.size() - 1)
 			{
 				sb.append("->");
 			}
+			else	// else (i == moves.size() - 1)
+			{
+				System.out.println(sb);
+				// Our output:
+				// (2,2)->(4,1)->(2,0)->(3,2)->(1,1)->(2,3)
+
+				// Given output:
+				// (3,3)->(1,2)->(3,1)->(4,3)->(2,2)->(3,4)
+			}
 		}
 
-		// (3,3)->(1,2)->(3,1)->(4,3)->(2,2)->(3,4)
-	}
+
+	} // End printPath
 
 } // End Knight.java

@@ -1,10 +1,14 @@
 package binarySearchTree;
 
+import java.awt.List;
+
 /*********************************************************
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
  * Date: 11.9.2015
  * Course: CS433 - Theory of Algorithms
  * Program Description: AVL Tree portion of Homework 7
+ * 
+ * Implemented using linked list.
  *********************************************************/
 
 public class BinarySearchTree
@@ -17,6 +21,8 @@ public class BinarySearchTree
 	// child -> parent = (k-1)/2
 
 	public static int[] bstArray = new int[100];
+	
+	List ls = new List();
 
 	public BinarySearchTree() { }
 	

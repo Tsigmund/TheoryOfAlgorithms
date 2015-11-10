@@ -1,10 +1,15 @@
 package avlTree;
 
+import java.awt.List;
+
 /*********************************************************
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
  * Date: 11.9.2015
  * Course: CS433 - Theory of Algorithms
  * Program Description: AVL Tree portion of Homework 7
+ * 
+ * Use rotations to balance/sort the tree.
+ * Implemented using linked list.
  *********************************************************/
 
 public class AVLTree
@@ -17,6 +22,8 @@ public class AVLTree
 		// child -> parent = (k-1)/2
 		
 		public static int[] avlArray = new int[100];
+		
+		List ls = new List();
 		
 		public AVLTree() { }
 		

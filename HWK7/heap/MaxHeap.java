@@ -18,15 +18,22 @@ public class MaxHeap
 	
 	public MaxHeap() { }
 	
+	//********************************************************
+	
 	public void insert(int item)
 	{
 		// insert int into heap
 	}
 	
+	//********************************************************
+	
 	public int remove()
 	{
 		// pop off the parent and return it
+		return 0;
 	}
+	
+	//********************************************************
 	
 	public static int[] createRandomArray()
 	{
@@ -40,6 +47,8 @@ public class MaxHeap
 		
 		return heapArray;
 	}
+	
+	//********************************************************
 
 	public static void main(String[] args)
 	{
@@ -70,6 +79,5 @@ public class MaxHeap
 		
 		System.out.println("Total time: " + totalTime);
 	}
-	
 	
 } // End MaxHeap.java

@@ -1,6 +1,10 @@
 package binarySearchTree;
 
-import java.awt.List;
+import java.text.NumberFormat;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Random;
+import java.util.Scanner;
 
 /*********************************************************
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
@@ -13,7 +17,7 @@ import java.awt.List;
 
 public class BinarySearchTree
 {
-	// simple BST insert
+	// simple BinarySearchTree insert
 	// fix AVL property
 	// create array
 	// partially complete binary search tree
@@ -21,64 +25,297 @@ public class BinarySearchTree
 	// child -> parent = (k-1)/2
 
 	public static int[] bstArray = new int[100];
-	
-	List ls = new List();
 
-	public BinarySearchTree() { }
-	
+	LinkedList<Integer> ls = new LinkedList<>();
+
+	private int removedInt;
+
+	//********************************************************
+	//********************************************************
 	//********************************************************
 
-	public void insert(int item)
+	class Node    
 	{
-		// insert int into AVL tree
+		Node left, right;
+		int data;
+
+		public Node(int n)
+		{
+			left = null;
+			right = null;
+			data = n;
+		}         
 	}
-	
-	//********************************************************
-	
-	public int search(int item)
+
+	private Node root;
+
+	public BinarySearchTree()
 	{
-		// determins if item is contained in the tree
-		// if so, returns int (not location?)
-		return 0;
+		root = null;
 	}
-	
-	//********************************************************
-	
-	public void displayInorder()
-	{
-		// traverse tree using inorder
-		// print
-	}
-	
+
 	//********************************************************
 
-	public int remove()
+	/*
+	 * case 0: If node is null, insert
+	 * case 1: If a match found, return false
+	 * case 2: If no match, create an item node and return it
+	 * case 3: If item < current node.data, insert into leftChild
+	 * case 4: If item > current node.data, insert into rightChild
+	 */
+	public void insert(int data)
 	{
-		// pop off the parent and return it
-		return 0;
+		root = insert(root, data);
 	}
-	
+	private Node insert(Node node, int data)
+	{
+		if (node == null)
+		{
+			node = new Node(data);
+		}
+		else
+		{
+			if (data <= node.data)
+			{
+				node.left = insert(node.left, data);
+			}
+			else
+			{
+				node.right = insert(node.right, data);
+			}
+		}
+		return node;
+	}
+
 	//********************************************************
 
-	public static int[] createRandomArray()
+	public int search(int target)
 	{
-		// Build a heap with 100 random numbers
-		//int[] heapArray = new int[100];
+		return search(target, root);
+	}
 
+	/*
+	 * case 1: node is null, not found.
+	 * case 2: target == node.data, found.
+	 * case 3: target < node.data, search left
+	 * case 4: target > node.data, search right
+	 */
+	private int search(int target, Node node)
+	{
+		if (node == null)
+		{
+			// If not found, return -1
+			return -1;
+		}
+		if (target == node.data)
+		{
+			return node.data;
+		}
+		if (target < node.data)
+		{
+			return search(target, node.left);
+		}
+		else
+		{
+			return search(target, node.right);
+		}
+
+	} // End find(E, Node)
+
+	//********************************************************
+
+	public void remove(int data)
+	{
+		remove(root, data);
+	}
+
+	/*
+	 * case 1. item == null, not found.
+	 * case 2: item < node.data, search left.
+	 * case 3. item > node.data, search right.
+	 * case 4. item not in tree, do nothing.
+	 * case 5: item = node.data, remove it.
+	 * 		   		(a) if node has a single child, attach the child
+	 * 				to node's parent
+	 * 				(b) if node has two children,
+	 * 				replace node with the largest node in its left sub tree
+	 */
+	private Node remove(Node node, int data)
+	{
+		if (node == null)
+		{
+			return node;
+		}
+		if (data < node.data)
+		{
+			node.left = remove(node.left, data);
+			return node;
+		}
+		if (data > node.data)
+		{
+			node.right = remove(node.right, data);
+			return node;
+		}
+		else
+		{
+			// Once item found, remove
+
+			// Store int for return
+			removedInt = node.data;
+			// If has single child, replace parent with child
+			if (node.left == null)
+			{
+				return node.right;
+			}
+			else if (node.right == null)
+			{
+				return node.left;
+			}
+			// If has two children, replace the largest node on left
+			else
+			{
+				node.data = findMax(node.left);
+				return node;
+			}
+		}
+
+	} // End remove(Node)
+
+	//********************************************************
+
+	/**
+	 * Return the largest child of the node parent which is the right most node
+	 * in the left sub tree.
+	 */
+	private int findMax(Node parent)
+	{
+		if (parent.right.right == null)
+		{
+			int value = parent.right.data;
+			parent.right = parent.right.left;
+			return value;
+		}
+		else
+		{
+			return findMax(parent.right);
+		}
+
+	} // End findLargestChild(Node))
+
+	//********************************************************
+
+	public void inorder()
+	{
+		inorder(root);
+	}
+	private void inorder(Node n)
+	{
+		if (n != null)
+		{
+			inorder(n.left);
+			System.out.print(n.data + " ");
+			inorder(n.right);
+		}
+	}
+
+	//********************************************************
+
+	public void preorder()
+	{
+		preorder(root);
+	}
+	private void preorder(Node n)
+	{
+		if (n != null)
+		{
+			System.out.print(n.data + " ");
+			preorder(n.left);             
+			preorder(n.right);
+		}
+	}
+
+	//********************************************************
+
+	public void postorder()
+	{
+		postorder(root);
+	}
+	private void postorder(Node n)
+	{
+		if (n != null)
+		{
+			postorder(n.left);             
+			postorder(n.right);
+			System.out.print(n.data + " ");
+		}
+	}     
+
+	//********************************************************
+
+	public int[] createRandomArray()
+	{
+		// Build 100-element randomized array
 		for (int i=0; i < bstArray.length; i++)
 		{
-			bstArray[i] = (int) Math.random();
+			Random rn = new Random(System.nanoTime());	// nanoTime() seed
+			int randomInt =  rn.nextInt(100);
+			bstArray[i] = randomInt;
 		}
 
 		return bstArray;
 	}
 	
+	public void printRandomArray()
+	{
+		System.out.println("Random Array:");
+		for (int i = 0; i < bstArray.length; i++)
+		{
+			// Break into 10-element wide column
+			if (i != 0 && (i % 10) == 0)
+			{
+				System.out.println();
+
+				if (bstArray[i] < 10)
+				{
+					// Extra white space on single digits for alignment
+					System.out.print(bstArray[i] + "  ");
+				}
+				else
+				{
+					System.out.print(bstArray[i] + " ");
+				}
+
+			}
+			else
+			{
+				if (bstArray[i] < 10)
+				{
+					// Extra white space on single digits for alignment
+					System.out.print(bstArray[i] + "  ");
+				}
+				else
+				{
+					System.out.print(bstArray[i] + " ");
+				}
+			}
+		}
+
+		System.out.println();
+		System.out.println();
+	}
+
 	//********************************************************
 
 	public static void main(String[] args)
 	{
 
 		BinarySearchTree bst = new BinarySearchTree();
+
+		bst.createRandomArray();
+
+		bst.printRandomArray();
+		
+		System.out.println("Inorder Traversal:");
 
 		long startTime = System.nanoTime();
 
@@ -87,22 +324,22 @@ public class BinarySearchTree
 			bst.insert(bstArray[i]);
 		}
 
-		// Test
-		//System.out.print("Original heap: " + heapArray.toString());
-
-		for (int i=0; i < bstArray.length; i++)
-		{
-			bst.remove();
-		}
+		bst.inorder();
 
 		long endTime = System.nanoTime();
 
-		// Test
-		//System.out.println("Sorted items after heap removal: " + heapArray.toString());
+		long duration = (endTime - startTime);
+		
+		System.out.println();
+		System.out.println();
 
-		long totalTime = (endTime - startTime);
-
-		System.out.println("Total time: " + totalTime);
+		System.out.println("Total time: " + NumberFormat.getNumberInstance(Locale.US).format(duration) + " ms");
+		
+		System.out.println();
+		System.out.println();
+		
+		System.out.println("Search for " + 17 + " resulted in " + bst.search(17) + ".");
+		
 	}
 
 } // End BinarySearchTree.java

@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Scanner;
 
 /*********************************************************
  * Authors: Ericaceous Wood, Trevor Sigmund, Topher Witt
@@ -17,21 +16,12 @@ import java.util.Scanner;
 
 public class BinarySearchTree
 {
-	// simple BinarySearchTree insert
-	// fix AVL property
-	// create array
-	// partially complete binary search tree
-	// parent >= child
-	// child -> parent = (k-1)/2
-
 	public static int[] bstArray = new int[100];
 
 	LinkedList<Integer> ls = new LinkedList<>();
 
 	private int removedInt;
 
-	//********************************************************
-	//********************************************************
 	//********************************************************
 
 	class Node    
@@ -75,6 +65,7 @@ public class BinarySearchTree
 		}
 		else
 		{
+			// This allows duplicates, however
 			if (data <= node.data)
 			{
 				node.left = insert(node.left, data);
@@ -104,7 +95,6 @@ public class BinarySearchTree
 	{
 		if (node == null)
 		{
-			// If not found, return -1
 			return -1;
 		}
 		if (target == node.data)
@@ -216,7 +206,7 @@ public class BinarySearchTree
 			System.out.print(n.data + " ");
 			inorder(n.right);
 		}
-	}
+	} // End inorder()
 
 	//********************************************************
 
@@ -232,7 +222,8 @@ public class BinarySearchTree
 			preorder(n.left);             
 			preorder(n.right);
 		}
-	}
+		
+	} // End preorder()
 
 	//********************************************************
 
@@ -248,10 +239,11 @@ public class BinarySearchTree
 			postorder(n.right);
 			System.out.print(n.data + " ");
 		}
-	}     
+	} // End postorder()
 
 	//********************************************************
 
+	// TODO switch to LinkedList?
 	public int[] createRandomArray()
 	{
 		// Build 100-element randomized array
@@ -263,7 +255,10 @@ public class BinarySearchTree
 		}
 
 		return bstArray;
-	}
+		
+	} // End createRandomArray()
+	
+	//********************************************************
 	
 	public void printRandomArray()
 	{
@@ -340,6 +335,6 @@ public class BinarySearchTree
 		
 		System.out.println("Search for " + 17 + " resulted in " + bst.search(17) + ".");
 		
-	}
+	} // End main
 
 } // End BinarySearchTree.java

@@ -23,6 +23,8 @@ public class AVLTree
 	// partially complete binary search tree
 	// parent >= child
 	// child -> parent = (k-1)/2
+	
+	// TODO print graphical tree
 
 	public static int[] avlArray = new int[100];
 
@@ -344,6 +346,9 @@ public class AVLTree
 		System.out.println();
 
 		System.out.println("Search for " + 17 + " resulted in " + bst.search(17) + ".");
+		System.out.println("Search for " + 27 + " resulted in " + bst.search(27) + ".");
+		System.out.println("Search for " + 3 + " resulted in " + bst.search(3) + ".");
+		System.out.println("Search for " + 77 + " resulted in " + bst.search(77) + ".");
 
 	} // End main
 

@@ -20,7 +20,7 @@ public class BinarySearchTree
 
 	LinkedList<Integer> ls = new LinkedList<>();
 
-	private int removedInt;
+	int removedInt = 0;
 
 	//********************************************************
 

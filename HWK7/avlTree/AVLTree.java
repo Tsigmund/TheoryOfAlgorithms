@@ -17,20 +17,10 @@ import java.util.Random;
 
 public class AVLTree
 {
-	// simple BST insert
-	// fix AVL property
-	// create array
-	// partially complete binary search tree
-	// parent >= child
-	// child -> parent = (k-1)/2
-	
-	// TODO print graphical tree
 
 	public static int[] avlArray = new int[100];
-
-	LinkedList<Integer> ls = new LinkedList<>();
-
-	private int removedInt;
+	
+	int removedInt = 0;
 
 	//********************************************************
 
@@ -316,11 +306,11 @@ public class AVLTree
 	public static void main(String[] args)
 	{
 
-		AVLTree bst = new AVLTree();
+		AVLTree avl = new AVLTree();
 
-		bst.createRandomArray();
+		avl.createRandomArray();
 
-		bst.printRandomArray();
+		avl.printRandomArray();
 
 		System.out.println("Inorder Traversal:");
 
@@ -328,10 +318,10 @@ public class AVLTree
 
 		for (int i=0; i < avlArray.length; i++)
 		{
-			bst.insert(avlArray[i]);
+			avl.insert(avlArray[i]);
 		}
 
-		bst.inorder();
+		avl.inorder();
 
 		long endTime = System.nanoTime();
 
@@ -345,10 +335,10 @@ public class AVLTree
 		System.out.println();
 		System.out.println();
 
-		System.out.println("Search for " + 17 + " resulted in " + bst.search(17) + ".");
-		System.out.println("Search for " + 27 + " resulted in " + bst.search(27) + ".");
-		System.out.println("Search for " + 3 + " resulted in " + bst.search(3) + ".");
-		System.out.println("Search for " + 77 + " resulted in " + bst.search(77) + ".");
+		System.out.println("Search for " + 17 + " resulted in " + avl.search(17) + ".");
+		System.out.println("Search for " + 27 + " resulted in " + avl.search(27) + ".");
+		System.out.println("Search for " + 3 + " resulted in " + avl.search(3) + ".");
+		System.out.println("Search for " + 77 + " resulted in " + avl.search(77) + ".");
 
 	} // End main
 

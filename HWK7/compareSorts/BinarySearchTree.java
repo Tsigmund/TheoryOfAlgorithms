@@ -1,7 +1,6 @@
-package binarySearchTree;
+package compareSorts;
 
 import java.text.NumberFormat;
-import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Random;
 
@@ -11,33 +10,44 @@ import java.util.Random;
  * Course: CS433 - Theory of Algorithms
  * Program Description: AVL Tree portion of Homework 7
  * 
- * Implemented using linked list.
+ * Implemented using linked list or nodes.
+ * 
+ * insert(x) - duplicates OK.
+ * search(x) - returns x if found
+ * inOrder() - traverse and display tree in order
  *********************************************************/
+
+class BSTNode    
+{
+	BSTNode left, right;
+	int data;
+
+	public BSTNode(int n)
+	{
+		left = null;
+		right = null;
+		data = n;
+	}         
+}
+
+//********************************************************
 
 public class BinarySearchTree
 {
-	public static int[] bstArray = new int[100];
-
-	LinkedList<Integer> ls = new LinkedList<>();
-
-	int removedInt = 0;
+	int size = 0;
+	private int[] bstArray;
+	
+	//********************************************************
+	
+	public BinarySearchTree(int size)
+	{
+		this.size = size;
+		bstArray = new int[size];
+	}
 
 	//********************************************************
 
-	class Node    
-	{
-		Node left, right;
-		int data;
-
-		public Node(int n)
-		{
-			left = null;
-			right = null;
-			data = n;
-		}         
-	}
-
-	private Node root;
+	private BSTNode root;
 
 	public BinarySearchTree()
 	{
@@ -53,15 +63,22 @@ public class BinarySearchTree
 	 * case 3: If item < current node.data, insert into leftChild
 	 * case 4: If item > current node.data, insert into rightChild
 	 */
+	public void insert(int[] items)
+	{
+		for (int i=0; i < items.length; i++)
+		{
+			insert(items[i]);
+		}
+	}
 	public void insert(int data)
 	{
 		root = insert(root, data);
 	}
-	private Node insert(Node node, int data)
+	private BSTNode insert(BSTNode node, int data)
 	{
 		if (node == null)
 		{
-			node = new Node(data);
+			node = new BSTNode(data);
 		}
 		else
 		{
@@ -91,7 +108,7 @@ public class BinarySearchTree
 	 * case 3: target < node.data, search left
 	 * case 4: target > node.data, search right
 	 */
-	private int search(int target, Node node)
+	private int search(int target, BSTNode node)
 	{
 		if (node == null)
 		{
@@ -130,7 +147,7 @@ public class BinarySearchTree
 	 * 				(b) if node has two children,
 	 * 				replace node with the largest node in its left sub tree
 	 */
-	private Node remove(Node node, int data)
+	private BSTNode remove(BSTNode node, int data)
 	{
 		if (node == null)
 		{
@@ -150,8 +167,6 @@ public class BinarySearchTree
 		{
 			// Once item found, remove
 
-			// Store int for return
-			removedInt = node.data;
 			// If has single child, replace parent with child
 			if (node.left == null)
 			{
@@ -177,7 +192,7 @@ public class BinarySearchTree
 	 * Return the largest child of the node parent which is the right most node
 	 * in the left sub tree.
 	 */
-	private int findMax(Node parent)
+	private int findMax(BSTNode parent)
 	{
 		if (parent.right.right == null)
 		{
@@ -194,56 +209,55 @@ public class BinarySearchTree
 
 	//********************************************************
 
-	public void inorder()
+	public void inOrder()
 	{
-		inorder(root);
+		inOrder(root);
 	}
-	private void inorder(Node n)
+	private void inOrder(BSTNode n)
 	{
 		if (n != null)
 		{
-			inorder(n.left);
+			inOrder(n.left);
 			System.out.print(n.data + " ");
-			inorder(n.right);
+			inOrder(n.right);
 		}
 	} // End inorder()
 
 	//********************************************************
 
-	public void preorder()
+	public void preOrder()
 	{
-		preorder(root);
+		preOrder(root);
 	}
-	private void preorder(Node n)
+	private void preOrder(BSTNode n)
 	{
 		if (n != null)
 		{
 			System.out.print(n.data + " ");
-			preorder(n.left);             
-			preorder(n.right);
+			preOrder(n.left);             
+			preOrder(n.right);
 		}
-		
+
 	} // End preorder()
 
 	//********************************************************
 
-	public void postorder()
+	public void postOrder()
 	{
-		postorder(root);
+		postOrder(root);
 	}
-	private void postorder(Node n)
+	private void postOrder(BSTNode n)
 	{
 		if (n != null)
 		{
-			postorder(n.left);             
-			postorder(n.right);
+			postOrder(n.left);             
+			postOrder(n.right);
 			System.out.print(n.data + " ");
 		}
 	} // End postorder()
 
 	//********************************************************
 
-	// TODO switch to LinkedList?
 	public int[] createRandomArray()
 	{
 		// Build 100-element randomized array
@@ -255,13 +269,15 @@ public class BinarySearchTree
 		}
 
 		return bstArray;
-		
+
 	} // End createRandomArray()
-	
+
 	//********************************************************
-	
+
 	public void printRandomArray()
 	{
+		System.out.println("1  2  3  4  5  6  7  8  9  10");
+		System.out.println("-  -  -  -  -  -  -  -  -  --");
 		System.out.println("Random Array:");
 		for (int i = 0; i < bstArray.length; i++)
 		{
@@ -303,32 +319,32 @@ public class BinarySearchTree
 
 	public static void main(String[] args)
 	{
-
-		BinarySearchTree bst = new BinarySearchTree();
+		BinarySearchTree bst = new BinarySearchTree(100);
+		
+		System.out.println("//********************************************************");
+		System.out.println("// Binary Search Tree");
+		System.out.println("//********************************************************");
+		System.out.println();
 
 		bst.createRandomArray();
 
 		bst.printRandomArray();
-		
-		System.out.println("Inorder Traversal:");
 
 		long startTime = System.nanoTime();
 
-		for (int i=0; i < bstArray.length; i++)
-		{
-			bst.insert(bstArray[i]);
-		}
-
-		bst.inorder();
+		bst.insert(bst.bstArray);
 
 		long endTime = System.nanoTime();
 
 		long duration = (endTime - startTime);
 		
+		System.out.println("Total insertion time: " + 
+				NumberFormat.getNumberInstance(Locale.US).format(duration) + " ms");
+		
 		System.out.println();
-		System.out.println();
-
-		System.out.println("Total time: " + NumberFormat.getNumberInstance(Locale.US).format(duration) + " ms");
+		
+		System.out.println("Inorder Traversal:");
+		bst.inOrder();
 		
 		System.out.println();
 		System.out.println();
@@ -337,7 +353,7 @@ public class BinarySearchTree
 		System.out.println("Search for " + 27 + " resulted in " + bst.search(27) + ".");
 		System.out.println("Search for " + 3 + " resulted in " + bst.search(3) + ".");
 		System.out.println("Search for " + 77 + " resulted in " + bst.search(77) + ".");
-		
+
 	} // End main
 
 } // End BinarySearchTree.java

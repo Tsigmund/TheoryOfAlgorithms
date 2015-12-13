@@ -1,0 +1,77 @@
+Enter number of frames: 3
+
+Enter page request 0 (positive integers): 
+5
+
+Enter page request 1 (positive integers): 4
+
+Enter page request 2 (positive integers): -3 //Program makes negative pages positive. 
+
+Enter page request 3 (positive integers): 2
+
+Enter page request 4 (positive integers): 3
+
+Enter page request 5 (positive integers): 3
+
+Enter page request 6 (positive integers): 67
+
+Enter page request 7 (positive integers): 222
+
+Enter page request 8 (positive integers): 3
+
+Enter page request 9 (positive integers): 2
+
+InitialFrames:
+Frames: EMPTY EMPTY EMPTY 
+
+Inserting page: 5
+Page Fault. Total Faults: 1
+Frames: 5 EMPTY EMPTY 
+Age: 1 0 0 
+
+Inserting page: 4
+Page Fault. Total Faults: 2
+Frames: 5 4 EMPTY 
+Age: 2 1 0 
+
+Inserting page: 3
+Page Fault. Total Faults: 3
+Frames: 5 4 3 
+Age: 3 2 1 
+
+Inserting page: 2
+Page Fault. Total Faults: 4
+Frames: 2 4 3 
+Age: 0 3 2 
+
+Inserting page: 3
+No Fault. Total Faults: 4
+Frames: 2 4 3 
+Age: 1 4 3 
+
+Inserting page: 3
+No Fault. Total Faults: 4
+Frames: 2 4 3 
+Age: 2 5 4 
+
+Inserting page: 67
+Page Fault. Total Faults: 5
+Frames: 2 67 3 
+Age: 3 0 5 
+
+Inserting page: 222
+Page Fault. Total Faults: 6
+Frames: 2 67 222 
+Age: 4 1 0 
+
+Inserting page: 3
+Page Fault. Total Faults: 7
+Frames: 3 67 222 
+Age: 0 2 1 
+
+Inserting page: 2
+Page Fault. Total Faults: 8
+Frames: 3 2 222 
+Age: 1 0 2 
+
+Total Faults: 8
